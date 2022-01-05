@@ -120,7 +120,16 @@ values (1200),
 (850),
 (2500),
 (600),
-(1900);
+(1900),
+(3200),
+(3300),
+(3250),
+(3800),
+(3500);
+insert into salary (monthly_salary)
+values (1400),
+(300);
+
 
 --“аблица roles
 
@@ -260,14 +269,13 @@ values (17,8),
 --- salary_id. Int, not null
 --Ќаполнить таблицу employee_salary 40 строками:
 --- в 10 строк из 40 вставить несуществующие employee_id
---foreign key (id_employee) references employees (id),
+
 
 create table employee_salary
 (id serial primary key,
 id_employee int not null unique,
-id_salary int not null,
-foreign key (id_employee) references employees (id),
-foreign key (id_salary) references salary (id));
+id_salary int not null);
+
 
 
 insert into employee_salary (id_employee, id_salary)
