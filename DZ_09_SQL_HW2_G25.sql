@@ -173,23 +173,123 @@ join roles r on r.id =re.id_role) as t1
 group by t1.title 
 having t1.title  like 'JS' ;
 --2)
-select sum(s.monthly_salary) --,r.role_name 
+select sum(t1.monthly_salary)  
+from (select*from employees e 
+join employee_salary es on e.id = es.id_employee 
+join roles_employee re on e.id =re.id_employee and re.id_employee =es.id_employee 
+join salary s on s.id =es.id_salary 
+join roles r on r.id =re.id_role
+where r.role_name  like '%J%S%' ) t1;
+
+ --23. Вывести минимальную ЗП QA инженеров
+select min(t1.monthly_salary) 
+from (select * from employees e 
+join employee_salary es on e.id = es.id_employee 
+join roles_employee re on e.id =re.id_employee and re.id_employee =es.id_employee 
+join salary s on s.id =es.id_salary 
+join roles r on r.id =re.id_role
+where r.role_name  like '%QA%')t1; 
+
+ --24. Вывести максимальную ЗП QA инженеров
+select max(t1.monthly_salary)
+from (select * from employees e 
+join employee_salary es on e.id = es.id_employee 
+join roles_employee re on e.id =re.id_employee and re.id_employee =es.id_employee 
+join salary s on s.id =es.id_salary 
+join roles r on r.id =re.id_role
+where r.role_name  like '%QA%')t1;
+ --25. Вывести количество QA инженеров
+--1)
+select count(*)
+from employees e 
+join roles_employee re on e.id =re.id_employee 
+join roles r on r.id =re.id_role
+where r.role_name  like '%QA%';
+
+--2)
+select count (*) 
+from employees e 
+where  exists (select *
+                     from roles_employee re
+                    where re.id_role in (select id from roles r where r.role_name like '%QA%') 
+                              and re.id = e.id)
+
+--3)
+select count (*) 
+from employees e 
+where  exists (select *
+                     from roles_employee re
+                     where exists (select * from roles r
+                                  where r.role_name like '%QA%'and r.id = re.id_role) 
+                     and re.id = e.id)
+                              
+ --26. Вывести количество Middle специалистов.
+select count(*)
+from employees e 
+join roles_employee re on e.id =re.id_employee 
+join roles r on r.id =re.id_role
+where r.role_name  like '%middle%';                   
+ --27. Вывести количество разработчиков
+select count(*)
+from employees e 
+left join roles_employee re on e.id =re.id_employee 
+left join roles r on r.id =re.id_role 
+where r.role_name like '%Developer%'
+ --28. Вывести фонд (сумму) зарплаты разработчиков.
+select sum(t1.monthly_salary)
+from (select * from employees e 
+join employee_salary es on e.id = es.id_employee 
+join roles_employee re on e.id =re.id_employee and re.id_employee =es.id_employee 
+join salary s on s.id =es.id_salary 
+join roles r on r.id =re.id_role
+where r.role_name  like '%Developer%')t1;
+ --29. Вывести имена, должности и ЗП всех специалистов по возрастанию
+select e.employee_name , r.role_name , s.monthly_salary 
 from employees e 
 join employee_salary es on e.id = es.id_employee 
 join roles_employee re on e.id =re.id_employee and re.id_employee =es.id_employee 
 join salary s on s.id =es.id_salary 
 join roles r on r.id =re.id_role
-group by r.role_name 
-having r.role_name  like '%J%S%' ;
+order by s.monthly_salary ;
+ --30. Вывести имена, должности и ЗП всех специалистов по возрастанию 
+ --у специалистов у которых ЗП от 1700 до 2300
+--1)
+select e.employee_name , r.role_name , s.monthly_salary 
+from employees e 
+join employee_salary es on e.id = es.id_employee 
+join roles_employee re on e.id =re.id_employee and re.id_employee =es.id_employee 
+join salary s on s.id =es.id_salary 
+join roles r on r.id =re.id_role 
+where s.monthly_salary between 1700 and 2300
+order by s.monthly_salary ;
+--2)
+select e.employee_name , r.role_name , s.monthly_salary 
+from employees e 
+join employee_salary es on e.id = es.id_employee 
+join roles_employee re on e.id =re.id_employee and re.id_employee =es.id_employee 
+join salary s on s.id =es.id_salary 
+join roles r on r.id =re.id_role 
+where s.monthly_salary >= 1700 and s.monthly_salary <= 2300
+order by s.monthly_salary ;
 
- --23. Вывести минимальную ЗП QA инженеров
+ --31. Вывести имена, должности и ЗП всех специалистов по возрастанию 
+ --у специалистов у которых ЗП меньше 2300
+select e.employee_name , r.role_name , s.monthly_salary 
+from employees e 
+join employee_salary es on e.id = es.id_employee 
+join roles_employee re on e.id =re.id_employee and re.id_employee =es.id_employee 
+join salary s on s.id =es.id_salary 
+join roles r on r.id =re.id_role 
+where s.monthly_salary <= 2300
+order by s.monthly_salary ;
 
- --24. Вывести максимальную ЗП QA инженеров
- --25. Вывести количество QA инженеров
- --26. Вывести количество Middle специалистов.
- --27. Вывести количество разработчиков
- --28. Вывести фонд (сумму) зарплаты разработчиков.
- --29. Вывести имена, должности и ЗП всех специалистов по возрастанию
- --30. Вывести имена, должности и ЗП всех специалистов по возрастанию у специалистов у которых ЗП от 1700 до 2300
- --31. Вывести имена, должности и ЗП всех специалистов по возрастанию у специалистов у которых ЗП меньше 2300
- --32. Вывести имена, должности и ЗП всех специалистов по возрастанию у специалистов у которых ЗП равна 1100, 1500, 2000
+ --32. Вывести имена, должности и ЗП всех специалистов по возрастанию 
+ --у специалистов у которых ЗП равна 1100, 1500, 2000
+select e.employee_name , r.role_name , s.monthly_salary 
+from employees e 
+join employee_salary es on e.id = es.id_employee 
+join roles_employee re on e.id =re.id_employee and re.id_employee =es.id_employee 
+join salary s on s.id =es.id_salary 
+join roles r on r.id =re.id_role 
+where s.monthly_salary in ( 1100, 1500, 2000)
+order by s.monthly_salary ;
